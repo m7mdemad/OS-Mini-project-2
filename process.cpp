@@ -49,7 +49,7 @@ class process()
    void print_response(int);
 };
 
-process::process()
+process::process(/*string file*/)
 {
    clk = 0;
    msg = '';
@@ -93,7 +93,7 @@ void process::receive()
 
    int rec_val = msgrcv(downStream, &respond, sizeof(respond.mtext), 0, !IPC_NOWAIT); // mtype ?
    if (rec_val == -1)
-      perror("Error in receive at kernel side");
+      perror("Error in receive from kernel at process");
 
    print_response(int(respond.mtext) - '0');
 }
