@@ -18,9 +18,10 @@ using namespace std;
 
 /* 
 everything we understand till now:
+ـــــــــــــــــــــــــــــــ
 - read from file 
 - translate it to the format to be sent to kernel via up stream
-- receive sigusr from kernel to inc its clk
+- receive SIGUSR2 signal from kernel to inc its clk
 - if # of clocks incremented == time of a process send it to the kernel
 - receive respond from kernel via down stream to indicate if the operation is done succussfuly or not
 */
