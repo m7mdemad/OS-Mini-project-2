@@ -26,11 +26,12 @@ everything we understand till now:
 - receive respond from kernel via down stream to indicate if the operation is done succussfuly or not
 */
 
-struct stream{
-    long mtype;             // equal 1818 at sending number of free slots
-    char command;           // A = add or D = delete
-    string msg;             // number of the slot to be deleted or new setence to be added
-    int state_count = -1;   /* used for two things
+struct stream
+{
+   long mtype;           // equal 1818 at sending number of free slots
+   char command;         // A = add or D = delete
+   string msg;           // number of the slot to be deleted or new setence to be added
+   int state_count = -1; /* used for two things
                                 1- return state:
                                     - 0: successful ADD 
                                     - 1: successful DEL
@@ -38,11 +39,10 @@ struct stream{
                                     - 3: unable to DEL
                                 2- return number of free slots on calling SIGUSR1     
                             */
-    
 };
 
-
-class process {
+class process
+{
    int clk;          // internal clock for the process
    string msg;       // translated message to be sent to kernel
    key_t upStream;   // UP stream to send data to the kernel
@@ -59,12 +59,13 @@ class process {
    void print_response(int);
 };
 
-process::process() {
+process::process()
+{
    pid_t pid;
-   stream_id = pid%10000 // update
+   stream_id = pid % 10000 // update
    clk = 0;
    msg = "";
-   filename = "test.txt"; // for now
+   filename = "test.txt";                         // for now
    upStream = msgget(upID, IPC_CREAT | 0644);     // intialize UP stream
    downStream = msgget(downID, IPC_CREAT | 0644); // intialize DOWN stream
    //signal(SIGUSR2, handler);
@@ -78,8 +79,8 @@ void process::Inc_clk(int signum)
 void process::send(string msg)
 {
    struct stream message;
-   message.mtype = stream_id;   // what is the mtype ??
-   message.msg = msg; // should i send it as a char array or what ??
+   message.mtype = stream_id; // what is the mtype ??
+   message.msg = msg;         // should i send it as a char array or what ??
 
    int send_val = msgsnd(upStream, &message, sizeof(message.msg), !IPC_NOWAIT);
    if (send_val == -1)
@@ -102,7 +103,7 @@ void process::receive()
 {
    struct stream respond;
 
-   int rec_val = msgrcv(downStream, &respond, sizeof(respond.msg), 0, !IPC_NOWAIT); // mtype ?
+   int rec_val = msgrcv(downStream, &respond, sizeof(respond.msg), 0, !IPC_NOWAIT); 
    if (rec_val == -1)
       perror("Error in receive at kernel side");
 
@@ -126,7 +127,7 @@ void process::readFile()
          if (i == 0)
          {
             stringstream ss(tokens[i]);
-            ss >> time; // TODO: handle errors
+            ss >> time; // TODO: handle validation
          }
          else if (i == 1)
          {
@@ -151,10 +152,18 @@ void process::readFile()
             }
          }
       }
-      while (time != clk){} // update
+      while (time != clk)
+      {
+      } // update
       send(msg);
-      clk = 0;
       receive();
+      clk = 0;
       /* this logic can be modified later */
    }
+}
+
+int main()
+{
+   process p1;
+   p1.readFile();
 }
